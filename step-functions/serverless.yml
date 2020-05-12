@@ -14,7 +14,7 @@ provider:
   iamManagedPolicies:
     - arn:aws:iam::aws:policy/AmazonSQSFullAccess
     - arn:aws:iam::aws:policy/AWSStepFunctionsFullAccess
-    - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess # TODO reduce these permissions
+    - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
 
 functions:
   emailCongratulations:
