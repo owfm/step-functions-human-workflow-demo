@@ -1,0 +1,128 @@
+service: step-functions
+
+plugins:
+  - serverless-step-functions
+  - serverless-bundle
+
+provider:
+  profile: medium
+  name: aws
+  runtime: nodejs12.x
+  region: eu-west-1
+  environment:
+    promotionsTable: !Ref PromotionsTable
+  iamManagedPolicies:
+    - arn:aws:iam::aws:policy/AmazonSQSFullAccess
+    - arn:aws:iam::aws:policy/AWSStepFunctionsFullAccess
+    - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess # TODO reduce these permissions
+
+functions:
+  emailCongratulations:
+    handler: email.congratulations
+
+  emailCommiserations:
+    handler: email.commiserations
+
+  proposePromotion:
+    handler: proposePromotion.call
+
+  getPromotions:
+    handler: getPromotions.call
+    events:
+      - http:
+          method: get
+          path: promotions
+          cors: true
+
+  handleDecisions:
+    handler: handleDecisions.call
+    events:
+      - http:
+          method: post
+          path: decisions
+          cors: true
+
+  storePromotions:
+    handler: storePromotions.call
+    iamManagedPolicies:
+      - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+    events:
+      - sqs:
+          arn: !GetAtt [PromotionQueue, Arn]
+
+  stopExecutions:
+    handler: stopExecutions.call
+
+stepFunctions:
+  stateMachines:
+    promotionFlow:
+      events:
+        - http:
+            method: post
+            path: proposepromotion
+            cors: true
+      name: myCompanyPromotionFlowStateMachine-${opt:stage}
+      definition:
+        Comment: "Handles the manual approval of promotions."
+        StartAt: ProposePromotion
+        States:
+          ProposePromotion:
+            Type: Task
+            Next: WaitForApproval
+            Resource: !GetAtt [proposePromotion, Arn]
+            ResultPath: "$.employeeDetails"
+          WaitForApproval:
+            Type: Task
+            Resource: arn:aws:states:::sqs:sendMessage.waitForTaskToken
+            Parameters:
+              QueueUrl: !Ref PromotionQueue
+              MessageBody:
+                Message.$: "$.employeeDetails"
+                TaskToken.$: "$$.Task.Token"
+            ResultPath: "$.decision"
+            Next: PromotionDecision
+
+          PromotionDecision:
+            Type: Choice
+            Choices:
+              - Variable: "$.decision"
+                StringEquals: approved
+                Next: EmailCongratulations
+              - Variable: "$.decision"
+                StringEquals: rejected
+                Next: EmailCommiserations
+
+          EmailCongratulations:
+            Type: Task
+            Resource: !GetAtt [emailCongratulations, Arn]
+            End: true
+          EmailCommiserations:
+            Type: Task
+            Resource: !GetAtt [emailCommiserations, Arn]
+            End: true
+
+resources:
+  Resources:
+    PromotionQueue:
+      Type: AWS::SQS::Queue
+
+    PromotionsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: taskToken
+            AttributeType: S
+          - AttributeName: decisionStatus
+            AttributeType: S
+        KeySchema:
+          - AttributeName: taskToken
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: decisionStatusGsi
+            KeySchema:
+              - AttributeName: decisionStatus
+                KeyType: HASH
+
+            Projection:
+              ProjectionType: ALL

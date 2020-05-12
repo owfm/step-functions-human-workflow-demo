@@ -1,0 +1,15 @@
+{
+  "devDependencies": {
+    "serverless-bundle": "1.4.0",
+    "serverless-offline": "6.1.5",
+    "serverless-step-functions": "2.18.0"
+  },
+  "name": "step-functions",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "2.673.0",
+    "lodash": "4.17.15"
+  }
+}
