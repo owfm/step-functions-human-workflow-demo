@@ -44,14 +44,9 @@ functions:
 
   storePromotions:
     handler: storePromotions.call
-    iamManagedPolicies:
-      - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
     events:
       - sqs:
           arn: !GetAtt [PromotionQueue, Arn]
-
-  stopExecutions:
-    handler: stopExecutions.call
 
 stepFunctions:
   stateMachines:

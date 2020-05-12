@@ -14,7 +14,6 @@ function App(props) {
     (async () => {
       try {
         const response = await API.get("step-functions-api", "/promotions");
-        console.log(JSON.stringify(response));
         setPromotionProposals(response);
       } catch (err) {
         console.error(err);
@@ -24,7 +23,6 @@ function App(props) {
 
   const submitDecision = async (decision, employee, taskToken) => {
     setLoading(true);
-    console.log(JSON.stringify({ decision, taskToken }));
     try {
       await API.post("step-functions-api", "/decisions", {
         body: { decision, taskToken },
