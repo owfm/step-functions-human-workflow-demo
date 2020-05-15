@@ -6,7 +6,7 @@ const client = new AWS.DynamoDB.DocumentClient();
 export const call = handler(async (event, context) => {
   const params = {
     TableName: process.env.promotionsTable,
-    IndexName: "decisionStatusGsi",
+    IndexName: "decisionStatus",
     KeyConditionExpression: "decisionStatus = :decisionStatus",
     ExpressionAttributeValues: {
       ":decisionStatus": "decisionPending",

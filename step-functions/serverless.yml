@@ -12,7 +12,6 @@ provider:
   environment:
     promotionsTable: !Ref PromotionsTable
   iamManagedPolicies:
-    - arn:aws:iam::aws:policy/AmazonSQSFullAccess
     - arn:aws:iam::aws:policy/AWSStepFunctionsFullAccess
     - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
 
@@ -48,11 +47,6 @@ functions:
 stepFunctions:
   stateMachines:
     promotionFlow:
-      events:
-        - http:
-            method: post
-            path: proposepromotion
-            cors: true
       name: myCompanyPromotionFlowStateMachine-${opt:stage}
       definition:
         Comment: "Handles the manual approval of promotions."
@@ -60,9 +54,9 @@ stepFunctions:
         States:
           ProposePromotion:
             Type: Task
-            Next: GetManualReview
             Resource: !GetAtt [proposePromotion, Arn]
             ResultPath: "$.employeeDetails"
+            Next: GetManualReview
 
           GetManualReview:
             Type: Task
@@ -108,7 +102,7 @@ resources:
           - AttributeName: taskToken
             KeyType: HASH
         GlobalSecondaryIndexes:
-          - IndexName: decisionStatusGsi
+          - IndexName: decisionStatus
             KeySchema:
               - AttributeName: decisionStatus
                 KeyType: HASH
