@@ -32,10 +32,11 @@ function App(props) {
         autoDismiss: true,
       });
     } catch (err) {
-      addToast("That proposal was already processed.", {
-        appearance: "info",
+      addToast("Eek! Something went wrong there...", {
+        appearance: "error",
         autoDismiss: true,
       });
+      console.error(err);
     } finally {
       removeLocalProposal(taskToken);
       setLoading(false);
