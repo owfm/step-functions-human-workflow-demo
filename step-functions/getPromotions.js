@@ -1,7 +1,7 @@
 import handler from "./libs/handler-lib";
 import AWS from "aws-sdk";
 
-const client = AWS.DynamoDb.DocumentClient();
+const client = new AWS.DynamoDB.DocumentClient();
 
 export const call = handler(async (event, context) => {
   const params = {

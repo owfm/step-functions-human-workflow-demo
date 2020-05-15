@@ -1,8 +1,8 @@
 import handler from "./libs/handler-lib";
 import AWS from "aws-sdk";
 
-var stepfunctions = new AWS.StepFunctions();
-var client = new AWS.DynamoDb.DocumentClient();
+const stepfunctions = new AWS.StepFunctions();
+const client = new AWS.DynamoDB.DocumentClient();
 
 export const call = handler(async (event, context) => {
   const body = JSON.parse(event.body);

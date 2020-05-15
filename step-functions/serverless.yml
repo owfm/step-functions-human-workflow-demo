@@ -44,9 +44,6 @@ functions:
 
   storePromotions:
     handler: storePromotions.call
-    events:
-      - sqs:
-          arn: !GetAtt [PromotionQueue, Arn]
 
 stepFunctions:
   stateMachines:
@@ -63,18 +60,18 @@ stepFunctions:
         States:
           ProposePromotion:
             Type: Task
-            Next: WaitForApproval
+            Next: GetManualReview
             Resource: !GetAtt [proposePromotion, Arn]
             ResultPath: "$.employeeDetails"
-          WaitForApproval:
+
+          GetManualReview:
             Type: Task
-            Resource: arn:aws:states:::sqs:sendMessage.waitForTaskToken
+            Resource: arn:aws:states:::lambda:invoke.waitForTaskToken
             Parameters:
-              QueueUrl: !Ref PromotionQueue
-              MessageBody:
-                Message.$: "$.employeeDetails"
-                TaskToken.$: "$$.Task.Token"
-            ResultPath: "$.decision"
+              FunctionName: ${self:service}-${opt:stage}-storePromotions
+              Payload:
+                employeeDetails.$: "$.employeeDetails"
+                taskToken.$: "$$.Task.Token"
             Next: PromotionDecision
 
           PromotionDecision:
@@ -98,9 +95,6 @@ stepFunctions:
 
 resources:
   Resources:
-    PromotionQueue:
-      Type: AWS::SQS::Queue
-
     PromotionsTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -118,6 +112,5 @@ resources:
             KeySchema:
               - AttributeName: decisionStatus
                 KeyType: HASH
-
             Projection:
               ProjectionType: ALL
