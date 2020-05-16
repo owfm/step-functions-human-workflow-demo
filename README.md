@@ -3,7 +3,7 @@ This repo accompanies [this](https://medium.com/p/46c0a3412fe4) article. Please 
 
 You'll need Serverless Framework set up on your machine to run this app. 
 
-After cloning this project, go into the step-function folder. In `serverless.yml`, update `profile` to reflect a profile in your AWS credentials file. Then run:
+After cloning this project, go into the step-function folder. In `serverless.yml`, update `profile` to reflect a profile in your local AWS credentials file. Then run:
 
     yarn
     sls deploy
