@@ -66,16 +66,17 @@ stepFunctions:
               Payload:
                 employeeDetails.$: "$.employeeDetails"
                 taskToken.$: "$$.Task.Token"
+            ResultPath: "$.decision"
             Next: PromotionDecision
 
           PromotionDecision:
             Type: Choice
             Choices:
               - Variable: "$.decision"
-                StringEquals: approved
+                StringEquals: "approved"
                 Next: EmailCongratulations
               - Variable: "$.decision"
-                StringEquals: rejected
+                StringEquals: "rejected"
                 Next: EmailCommiserations
 
           EmailCongratulations:
