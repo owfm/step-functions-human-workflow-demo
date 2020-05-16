@@ -1,5 +1,5 @@
 # Run this project
-This repo accompanies [this](https://medium.com/p/46c0a3412fe4) article. Please head there for an explanation. 
+This repo accompanies [this](https://medium.com/p/46c0a3412fe4) article. Please head there for an in-depth walkthrough of this app. 
 
 You'll need Serverless Framework set up on your machine to run this app. 
 
