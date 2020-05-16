@@ -3,19 +3,19 @@ This repo accompanies [this](https://medium.com/p/46c0a3412fe4) article. Please 
 
 You'll need Serverless Framework set up on your machine to run this app. 
 
-Once you've cloned this project, go into the step-function folder and run:
+After cloning this project, go into the step-function folder. In `serverless.yml`, update `profile` to reflect a profile in your AWS credentials file. Then run:
 
     yarn
     sls deploy
 
 You'll need to take note of the API ID for API Gateway that is created from the output from Serverless Framework. 
 
-Go into the client directory and run:
+Go into the `step-functions-client` directory and run:
 
     yarn
     touch .env
     
-In your .env file add:
+In your `.env` file add:
 `REACT_APP_API_URL=https://<YOUR_API_ID>.execute-api.eu-west-1.amazonaws.com/dev`
 
 Then start the client:
