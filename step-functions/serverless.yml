@@ -25,8 +25,8 @@ functions:
   proposePromotion:
     handler: proposePromotion.call
 
-  getPromotions:
-    handler: getPromotions.call
+  getPendingPromotions:
+    handler: getPendingPromotions.call
     events:
       - http:
           method: get

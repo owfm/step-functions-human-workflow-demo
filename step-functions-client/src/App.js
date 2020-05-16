@@ -101,7 +101,7 @@ const PromotionCard = ({
       <button
         className="decision"
         disabled={loading}
-        value={"approved"}
+        value="approved"
         onClick={handleDecision}
       >
         Approve
@@ -109,7 +109,7 @@ const PromotionCard = ({
       <button
         className="decision"
         disabled={loading}
-        value={"rejected"}
+        value="rejected"
         onClick={handleDecision}
       >
         Reject
