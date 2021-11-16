@@ -9,7 +9,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "2.673.0",
+    "aws-sdk": "2.814.0",
     "lodash": "4.17.19"
   }
 }
